@@ -1,3 +1,3 @@
 <h5>
-  Copy &copy; Right Resversed, <a href="#" class="ref-link">SCM</a>.
+  Copy &copy; Right All Rights Reversed, Power By <a href="#" class="ref-link">SCM</a>.
 </h5>

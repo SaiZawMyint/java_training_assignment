@@ -1,5 +1,7 @@
 package ojt.simpletask.app.persistence.entity.course;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +29,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "applicant")
-public class Applicant {
+public class Applicant implements Serializable{
+	/**
+	 * <h2> serialVersionUID</h2>
+	 * <p>
+	 * serialVersionUID
+	 * </p>
+	 */
+	private static final long serialVersionUID = 6222233705305329642L;
 	/**
 	 * <h2>id</h2>
 	 * <p>

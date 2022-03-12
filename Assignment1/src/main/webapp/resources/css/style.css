@@ -27,7 +27,9 @@ body {
   display: inline-block;
   text-align: center;
 }
-
+.wrapper i{
+  display: inline-block;
+ }
 .wrapper h2, h3, h4, h5, h6 {
   text-align: center;
 }
@@ -70,9 +72,14 @@ body {
 
 .menu-ul li {
   float: left;
-  margin: 5px;
+  margin: 5px 10px;
 }
-
+.menu-ul li a{
+  text-decoration: none;
+}
+.menu-ul li .btn{
+  margin: 0px;
+}
 .menu-ul li a:hover {
   color: #ff00ff;
 }
@@ -104,7 +111,8 @@ body {
   text-align: left;
 }
 
-.form-inner input {
+.form-inner input,
+.form-inner select {
   width: 100%;
   padding: 5px;
   border: 0;
@@ -112,7 +120,8 @@ body {
   border-bottom: 2px solid;
 }
 
-.form-inner input:focus {
+.form-inner input:focus,
+.form-inner select:focus {
   border-bottom: 2px solid #0080ff;
 }
 
@@ -135,16 +144,26 @@ table {
 .btn.submit {
   padding: 10px 20px;
 }
-
+.btn.ed,
+.btn.de{
+  padding: 7px;
+  text-decoration: none;
+  font-size: .9em;
+}
 .btn:hover {
   background-color: #0080ff3c;
   color: #333;
 }
-
+.btn.ed:hover{
+  background-color: #00808040;
+}
+.btn.de:hover{
+  background-color: #ff008040;
+}
 .message-field {
   width: 350px;
   margin: 10px auto;
-  color: red;
+  color: #ff0080;
   border: 2px solid;
   text-align: center;
   padding: 10px;
@@ -172,7 +191,11 @@ table {
   overflow: hidden;
   box-shadow: 2px 2px 15px #000000cc;
 }
-
+.one-line-hdr{
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .btn-f {
   text-align: center;
   padding: 20px 0px 0px;
@@ -232,7 +255,17 @@ table {
   text-decoration: underline;
   color: #0080ff;
 }
-
+.up-field{
+  width: 80%;
+  margin: 50px auto 0px;
+  text-align: center;
+}
+.up-field a{
+  text-decoration: none;
+}
+.up-field .btn{
+  margin: 0px auto;
+}
 .item {
   padding: 5px;
   box-sizing: border-box;

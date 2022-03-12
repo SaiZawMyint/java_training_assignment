@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+	xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+    http://www.springframework.org/schema/beans/spring-beans.xsd  
+    http://www.springframework.org/schema/security  
+    http://www.springframework.org/schema/security/spring-security.xsd">
+	<http>
+		<intercept-url pattern="/home" access="hasAnyRole('USER', 'ADMIN')" />
+		<intercept-url pattern="/registration" access="hasAnyRole('USER', 'ADMIN')" />
+		<intercept-url pattern="/upload" access="hasRole('ADMIN')" />
+        <intercept-url pattern="/form/delete/{id}/{cid}" access="hasRole('ADMIN')" />
+        <intercept-url pattern="/form/edit/{id}/{cid}" access="hasRole('ADMIN')" />
+		<form-login login-page="/joinus"
+			login-processing-url="/joinus" username-parameter="username"
+			password-parameter="password" default-target-url="/home" always-use-default-target="true"/>
+		<logout logout-url="/logout" logout-success-url="/joinus" />
+		<access-denied-handler error-page="/access-denined" />
+	</http>
+	<authentication-manager>
+		<authentication-provider
+			user-service-ref="userService">
+			<password-encoder ref="bCryptPasswordEncoder" />
+		</authentication-provider>
+	</authentication-manager>
+</beans:beans>  

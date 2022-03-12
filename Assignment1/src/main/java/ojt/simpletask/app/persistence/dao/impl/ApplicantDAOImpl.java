@@ -83,7 +83,7 @@ public class ApplicantDAOImpl implements ApplicantDAO {
 	@Override
 	public List<Applicant> getAllApplicants() {
 		// TODO Auto-generated method stub
-		return this.sessionFactory.getCurrentSession().createQuery("from Applicant", Applicant.class).getResultList();
+		return this.sessionFactory.getCurrentSession().createQuery("from Applicant order by id desc", Applicant.class).getResultList();
 	}
 
 	/**

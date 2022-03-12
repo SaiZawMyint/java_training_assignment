@@ -58,4 +58,5 @@ public interface ApplicantDAO {
 	 * @return void
 	 */
 	public void dbDeleteApplicant(Integer id);
+
 }

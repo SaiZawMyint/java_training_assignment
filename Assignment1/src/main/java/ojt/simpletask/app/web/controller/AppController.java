@@ -1,5 +1,6 @@
 package ojt.simpletask.app.web.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -26,8 +27,10 @@ import ojt.simpletask.app.bl.service.form.ApplicantService;
 import ojt.simpletask.app.bl.service.form.CourseService;
 import ojt.simpletask.app.bl.service.form.ExcelService;
 import ojt.simpletask.app.common.customform.CustomForm;
+import ojt.simpletask.app.common.excel.Constant;
 import ojt.simpletask.app.web.form.excelproduct.ExcelProduct;
 import ojt.simpletask.app.web.form.registration.CourseForm;
+import ojt.simpletask.app.web.form.registration.LoginForm;
 import ojt.simpletask.app.web.form.registration.RegistrationForm;
 
 /**
@@ -84,6 +87,13 @@ public class AppController {
 	@Autowired
 	ExcelService excelService;
 
+	@RequestMapping(value = "/joinus")
+	public ModelAndView joinPage() {
+		model = new ModelAndView("joinus");
+		this.defaultFormModelView("Join Us", new CustomForm("loginForm", new LoginForm()));
+		return model;
+	}
+
 	/**
 	 * <h2>coursePage</h2>
 	 * <p>
@@ -99,8 +109,78 @@ public class AppController {
 		this.defaultFormModelView("All Avaliable Course", new CustomForm("applicantForm", new CourseForm()));
 		List<CourseDTO> allcourse = courseService.doGetAllCourse();
 		model.addObject("courseForm", allcourse);
+		return model;
+	}
+
+	/**
+	 * <h2>viewListPage</h2>
+	 * <p>
+	 * List page.
+	 * </p>
+	 *
+	 * @return
+	 * @return ModelAndView
+	 */
+	@RequestMapping(value = "/viewlists")
+	public ModelAndView viewListPage() {
+		model = new ModelAndView("viewlists");
 		model.addObject("courseList", courseService.doFetchRegistratedForm());
 		return model;
+	}
+
+	/**
+	 * <h2>uploadePage</h2>
+	 * <p>
+	 * Upload page.
+	 * </p>
+	 *
+	 * @return
+	 * @return ModelAndView
+	 */
+	@RequestMapping(value = "/upload")
+	public ModelAndView uploadePage() {
+		model = new ModelAndView("upload");
+		model.addObject("allCourses", Constant.defaultSetting());
+		this.defaultFormModelView("Upload Course From Excel", new CustomForm("excelForm", new ExcelProduct()));
+		return model;
+	}
+
+	/**
+	 * <h2>errorPage</h2>
+	 * <p>
+	 * Access denined page.
+	 * </p>
+	 *
+	 * @return
+	 * @return ModelAndView
+	 */
+	@RequestMapping(value = "/access-denined")
+	public ModelAndView errorPage() {
+		model = new ModelAndView("resultpage");
+		model.addObject("systemMessage", messageSource.getMessage("M_ER_NON_ACCESS", null, null));
+		return model;
+	}
+
+	/**
+	 * <h2>join</h2>
+	 * <p>
+	 * Join page.
+	 * </p>
+	 *
+	 * @param logform LoginForm
+	 * @param binder  BindingResult
+	 * @return
+	 * @return ModelAndView
+	 */
+	@RequestMapping(value = "/join", method = RequestMethod.POST)
+	public ModelAndView join(@Valid @ModelAttribute("loginForm") LoginForm logform, BindingResult binder) {
+		model = new ModelAndView("joinus");
+		if (binder.hasErrors()) {
+			model.addObject("systemMessage", messageSource.getMessage("M_ER_CONFIRM_DENINED", null, null));
+			model.addObject("loginForm", logform);
+		}
+		return model;
+
 	}
 
 	/**
@@ -154,7 +234,37 @@ public class AppController {
 		}
 		return model;
 	}
-
+	@RequestMapping(value="/edit/course/form",method=RequestMethod.POST)
+	public ModelAndView courseForm(@Valid @ModelAttribute("courseForm") CourseForm form,BindingResult binder) {
+		model = new ModelAndView();
+		if(!binder.hasErrors()) {
+			model.setViewName("resultpage");
+			CourseDTO cdto = new CourseDTO(form.getId(), form.getCoursename(), form.getSchedule(), form.getPrice(), null, null);
+			courseService.doUpdateCourse(cdto);
+			model.addObject("systemMessage", "Update Course successfully");
+		}else {
+			model.setViewName("editcourse");
+			model.addObject("systemMessage", messageSource.getMessage("M_ER_CONFIRM_DENINED", null, null));
+			this.defaultFormModelView("Edit Course", new CustomForm("courseForm", form));	
+		}
+		return model;
+	}
+	/**
+	 * <h2> editCourse</h2>
+	 * <p>
+	 * Course edit page
+	 * </p>
+	 *
+	 * @param id Integer
+	 * @return
+	 * @return ModelAndView
+	 */
+	@RequestMapping("/edit/course/{id}")
+	public ModelAndView editCourse(@PathVariable("id") Integer id) {
+		model = new ModelAndView("editcourse");
+		this.defaultFormModelView("Edit Course", new CustomForm("courseForm", courseService.doGetCourseById(id)));
+		return model;
+	}
 	/**
 	 * <h2>eidtForm</h2>
 	 * <p>
@@ -175,7 +285,17 @@ public class AppController {
 		this.defaultFormModelView("Edit Form", new CustomForm("infromationForm", reg));
 		return model;
 	}
-
+	@RequestMapping("/delete/course/{id}")
+	public ModelAndView deleteCourse(@PathVariable("id")Integer id) {
+		model = new ModelAndView("resultpage");
+		if(courseService.doGetCourseById(id) != null) {
+			model.addObject("systemMessage","Delete "+courseService.doGetCourseById(id).getCoursename()+" course successfully!");
+			courseService.doDeleteCourse(id);
+		}else {
+			model.addObject("systemMessage", messageSource.getMessage("M_ER_ACCESS_DENINED", null, null));
+		}
+		return model;
+	}
 	/**
 	 * <h2>deleteFrom</h2>
 	 * <p>
@@ -210,14 +330,38 @@ public class AppController {
 	 * @return
 	 * @return ModelAndView
 	 */
-	@RequestMapping(value = "/uploadExcel", method = RequestMethod.POST)
-	public ModelAndView uploadExcel(@Valid @ModelAttribute("fileupload") ExcelProduct product, BindingResult binder) {
-		model = new ModelAndView("resultpage");
+	@RequestMapping(value = "/excel/upload", method = RequestMethod.POST)
+	public ModelAndView uploadExcel(@Valid @ModelAttribute("excelForm") ExcelProduct exc, BindingResult binder) {
+		model = new ModelAndView();
+		if (!binder.hasErrors()) {
+			model.setViewName("resultpage");
+			try {
+				String excelsavemessage = excelService.doSaveExcelToCourse(exc.getExcfile(), exc.getCoursename());
+				model.addObject("systemMessage", messageSource.getMessage(excelsavemessage, null, null));
+			} catch (IOException e) {
+				model.addObject("systemMessage", messageSource.getMessage("M_ER_EXCEL_DENINED", null, null));
+			}
+		} else {
+			model.setViewName("upload");
+			this.defaultFormModelView("Upload Course From Excel", new CustomForm("allCourses", Constant.defaultSetting()));
+			model.addObject("systemMessage", messageSource.getMessage("M_ER_CONFIRM_DENINED", null, null));
+			model.addObject("excelForm", exc);
+		}
+
 		return model;
 	}
 
+	/**
+	 * <h2>downloadData</h2>
+	 * <p>
+	 * Download all data.
+	 * </p>
+	 *
+	 * @return
+	 * @return ResponseEntity<InputStreamResource>
+	 */
 	@RequestMapping(value = "/downloadallcourse")
-	public ResponseEntity<InputStreamResource> downloadProduct() {
+	public ResponseEntity<InputStreamResource> downloadData() {
 		String filename = "test.xlsx";
 		InputStreamResource fileinp = new InputStreamResource(excelService.doDownlaodCourse());
 

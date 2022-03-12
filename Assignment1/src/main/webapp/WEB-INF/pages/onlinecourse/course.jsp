@@ -10,6 +10,9 @@
 </head>
 <body>
   <h2>${title }</h2>
+  <div class="up-field">
+  <a href="${pageContext.request.contextPath}/viewlists" class="btn">View all Applicant List</a>
+</div>
   <ul class="express-list clearfix">
     <c:forEach items="${courseForm }" var="course">
       <li class="course-li"><form:form method="Post"
@@ -27,7 +30,7 @@
           <div class="c-field">
             <div class="cur-img"></div>
             <div class="list-f">
-              <h2>${course.coursename }</h2>
+              <h2 class="one-line-hdr">${course.coursename }</h2>
               <div class="lists">
                 <div class="item">
                   <b>Schedule</b> : <span>${course.schedule }</span>
@@ -39,8 +42,10 @@
                   <b>Post date</b> : <span>${course.date }</span>
                 </div>
                 <div class="btn-f">
+                <a href="${pageContext.request.contextPath}/edit/course/${course.id }" class="btn ed">Edit</a>
                   <input name="button" type="submit" class="btn submit"
                     value="Enroll" />
+                    <a href="${pageContext.request.contextPath}/delete/course/${course.id }" class="btn de">Delete</a>
                 </div>
               </div>
             </div>
@@ -48,28 +53,5 @@
         </form:form></li>
     </c:forEach>
   </ul>
-  <table>
-    <tr>
-      <th style="width: 120px;">Username</th>
-      <th style="width: 200px;">Course name</th>
-      <th style="width: 250px;">Schedule</th>
-      <th style="width: 120px;">Prices</th>
-      <th style="width: 120px;">Edit/Delete</th>
-    </tr>
-    <c:forEach items="${courseList }" var="course">
-      <tr>
-        <td>${course.username }</td>
-        <td>${course.coursename }</td>
-        <td>${course.schedule }</td>
-        <td>${course.prices }$</td>
-        <td><a
-          href="${pageContext.request.contextPath}/form/edit/${course.userid }/${course.courseId}">Edit</a>
-          / <a
-          href="${pageContext.request.contextPath }/form/delete/${course.userid }/${course.courseId}">Delete</a>
-        </td>
-      </tr>
-    </c:forEach>
-  </table>
-
 </body>
 </html>

@@ -3,21 +3,51 @@
        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
+    <!-- Join Us -->
+    <definition name="joinus" extends="classic">
+        <put-attribute name="title" value="Online Courses - Join Us"></put-attribute>
+        <put-attribute name="body"
+            value="/WEB-INF/pages/action/joinus.jsp"></put-attribute>
+    </definition>
     <!-- Registration -->
     <definition name="registration" extends="classic">
-        <put-attribute name="title" value="Registration"></put-attribute>
+        <put-attribute name="title" value="Online Courses - Registration"></put-attribute>
+         <put-attribute name="menu" value="/WEB-INF/pages/common/inc/menu.jsp"></put-attribute>
         <put-attribute name="body"
             value="/WEB-INF/pages/onlinecourse/registration.jsp"></put-attribute>
+    </definition>
+    <!-- Edit course -->
+    <definition name="editcourse" extends="classic">
+        <put-attribute name="title" value="Online Courses - Edit Course"></put-attribute>
+         <put-attribute name="menu" value="/WEB-INF/pages/common/inc/menu.jsp"></put-attribute>
+        <put-attribute name="body"
+            value="/WEB-INF/pages/onlinecourse/editcourse.jsp"></put-attribute>
     </definition>
     <!-- Course -->
     <definition name="course" extends="classic">
         <put-attribute name="title" value="Online Courses"></put-attribute>
+         <put-attribute name="menu" value="/WEB-INF/pages/common/inc/menu.jsp"></put-attribute>
         <put-attribute name="body"
             value="/WEB-INF/pages/onlinecourse/course.jsp"></put-attribute>
     </definition>
+    <!-- Applicant List -->
+    <definition name="viewlists" extends="classic">
+        <put-attribute name="title" value="Online Courses - All Applicant List"></put-attribute>
+         <put-attribute name="menu" value="/WEB-INF/pages/common/inc/menu.jsp"></put-attribute>
+        <put-attribute name="body"
+            value="/WEB-INF/pages/onlinecourse/applicantlists.jsp"></put-attribute>
+    </definition>
+    <!-- Course -->
+    <definition name="upload" extends="classic">
+        <put-attribute name="title" value="Online Courses - Upload"></put-attribute>
+        <put-attribute name="menu" value="/WEB-INF/pages/common/inc/menu.jsp"></put-attribute>
+        <put-attribute name="body"
+            value="/WEB-INF/pages/onlinecourse/upload.jsp"></put-attribute>
+    </definition>
     <!-- Result -->
     <definition name="resultpage" extends="classic">
-        <put-attribute name="title" value="Online Courses"></put-attribute>
+        <put-attribute name="title" value="Online Courses - Result"></put-attribute>
+           <put-attribute name="menu" value="/WEB-INF/pages/common/inc/menu.jsp"></put-attribute>
         <put-attribute name="body"
             value="/WEB-INF/pages/onlinecourse/resultpage.jsp"></put-attribute>
     </definition>

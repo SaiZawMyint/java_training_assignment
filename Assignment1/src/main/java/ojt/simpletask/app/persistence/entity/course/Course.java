@@ -1,5 +1,7 @@
 package ojt.simpletask.app.persistence.entity.course;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -35,7 +38,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "course")
-public class Course {
+public class Course implements Serializable {
+	/**
+	 * <h2>serialVersionUID</h2>
+	 * <p>
+	 * serialVersionUID
+	 * </p>
+	 */
+	private static final long serialVersionUID = -5266104117328259823L;
 	/**
 	 * <h2>id</h2>
 	 * <p>
@@ -77,7 +87,7 @@ public class Course {
 	 * </p>
 	 */
 	@Column(name = "date")
-	private String postdate;
+	private LocalDate postdate;
 
 	/**
 	 * <h2>applicants</h2>
@@ -87,5 +97,6 @@ public class Course {
 	 */
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "online_course", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+	@OrderBy("user_id DESC")
 	private List<Applicant> applicants = new ArrayList<Applicant>();
 }

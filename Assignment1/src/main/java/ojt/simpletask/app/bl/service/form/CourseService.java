@@ -27,7 +27,16 @@ public interface CourseService {
 	 * @return List<CourseDTO>
 	 */
 	public List<CourseDTO> doGetAllCourse();
-
+	/**
+	 * <h2> doSaveCourse</h2>
+	 * <p>
+	 * Save course.
+	 * </p>
+	 *
+	 * @param course CourseDTO
+	 * @return void
+	 */
+	public void doUpdateCourse(CourseDTO course);
 	/**
 	 * <h2>doFetchRegistratedForm</h2>
 	 * <p>
@@ -85,4 +94,27 @@ public interface CourseService {
 	 * @return void
 	 */
 	public void doDeleteCourse(Integer id);
+
+	/**
+	 * <h2>doGetAllCourseName</h2>
+	 * <p>
+	 * Get all course name.
+	 * </p>
+	 *
+	 * @return
+	 * @return List<String>
+	 */
+	public List<String> doGetAllCourseName();
+	
+	/**
+	 * <h2> getCourseById</h2>
+	 * <p>
+	 * Get course by id.
+	 * </p>
+	 *
+	 * @param id Integer
+	 * @return
+	 * @return CourseDTO
+	 */
+	public CourseDTO doGetCourseById(Integer id);
 }

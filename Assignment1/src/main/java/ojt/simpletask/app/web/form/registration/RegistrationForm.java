@@ -1,5 +1,6 @@
 package ojt.simpletask.app.web.form.registration;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -45,6 +46,7 @@ public class RegistrationForm {
 	 * </p>
 	 */
 	@NotBlank
+	@Email
 	private String email;
 	/**
 	 * <h2>phone</h2>
@@ -52,7 +54,7 @@ public class RegistrationForm {
 	 * phone
 	 * </p>
 	 */
-	@Size(min = 10)
+	@Size(min = 10,max = 11)
 	private String phone;
 	/**
 	 * <h2>address</h2>

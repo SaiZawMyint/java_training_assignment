@@ -92,6 +92,16 @@
             value="classpath:messages,classpath:validationMessages" />
         <property name="defaultEncoding" value="UTF-8" />
     </bean>
-
-
+    <!-- Multipart file config -->
+    <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- setting maximum upload size -->
+        <property name="maxUploadSize" value="20971520" />
+    </bean>
+    <!-- Spring Security -->
+    <bean id="bCryptPasswordEncoder"
+        class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+    </bean>
+    <bean id="userService"
+        class="ojt.simpletask.app.bl.service.form.impl.UserServiceImpl"></bean>
 </beans>

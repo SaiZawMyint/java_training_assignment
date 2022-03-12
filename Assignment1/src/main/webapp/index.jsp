@@ -5,6 +5,10 @@
 <html>
 <head></head>
 <body>
-  <a href="${pageContext.request.contextPath }/home">Online Course</a>
+<div style="text-align:center">
+  <a href="${pageContext.request.contextPath }/home">Join Us</a><br>
+  <a href="${pageContext.request.contextPath }/joinus">Join As Admin</a>
+</div>
+  
 </body>
 </html>

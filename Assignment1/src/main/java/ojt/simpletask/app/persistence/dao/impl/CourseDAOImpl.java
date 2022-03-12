@@ -1,5 +1,6 @@
 package ojt.simpletask.app.persistence.dao.impl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import ojt.simpletask.app.bl.dto.ApplicantDTO;
+import ojt.simpletask.app.bl.dto.CourseDTO;
 import ojt.simpletask.app.persistence.dao.CourseDAO;
 import ojt.simpletask.app.persistence.entity.course.Applicant;
 import ojt.simpletask.app.persistence.entity.course.Course;
@@ -28,14 +30,6 @@ import ojt.simpletask.app.web.form.registration.RegistratedForm;
  */
 @Repository
 public class CourseDAOImpl implements CourseDAO {
-
-	/**
-	 * <h2>HQL_FETCH_ALL</h2>
-	 * <p>
-	 * HQL_FETCH_ALL
-	 * </p>
-	 */
-	public static final String HQL_FETCH_ALL = "FROM Course a " + "JOIN a.applicants r WHERE r.id = :id";
 
 	/**
 	 * <h2>sessionFactory</h2>
@@ -56,7 +50,8 @@ public class CourseDAOImpl implements CourseDAO {
 	 */
 	@Override
 	public List<Course> dbGetAllCourse() {
-		return this.sessionFactory.getCurrentSession().createQuery("from Course", Course.class).getResultList();
+		return this.sessionFactory.getCurrentSession().createQuery("from Course order by id desc", Course.class)
+				.getResultList();
 	}
 
 	/**
@@ -105,8 +100,9 @@ public class CourseDAOImpl implements CourseDAO {
 					r.setCourseId(c.getId());
 					r.setUsername(a.getUsername());
 					r.setCoursename(c.getCoursename());
-					r.setPrices(c.getPrices());
-					r.setSchedule(c.getSchedule());
+					r.setEmail(a.getEmail());
+					r.setPhone(a.getPhonenumber());
+					r.setAddress(a.getAddress());
 					result.add(r);
 				}
 			}
@@ -163,6 +159,7 @@ public class CourseDAOImpl implements CourseDAO {
 		Course c = this.dbGetCourseById(id);
 		this.triggerExistence(c, formId);
 		sessionFactory.getCurrentSession().merge(c);
+		sessionFactory.getCurrentSession().flush();
 	}
 
 	/**
@@ -182,5 +179,112 @@ public class CourseDAOImpl implements CourseDAO {
 				break;
 			}
 		}
+	}
+
+	/**
+	 * <h2>dbSaveAllCourse</h2>
+	 * <p>
+	 * Save all Corse
+	 * </p>
+	 * 
+	 * @param courses
+	 */
+	@Override
+	public void dbSaveAllCourse(List<Course> courses) {
+		for (Course c : courses) {
+			System.out.println("course name : "+c.getCoursename());
+			sessionFactory.getCurrentSession().saveOrUpdate(c);
+		}
+	}
+
+	/**
+	 * <h2>dbGetCourseByAppId</h2>
+	 * <p>
+	 * Get Corse by applicant id (fetch joined table child to parent);
+	 * </p>
+	 * 
+	 * @param appid Integer
+	 * @return
+	 */
+	@Override
+	public Course dbGetCourseByAppId(Integer appid) {
+		List<Course> courselist = this.dbGetAllCourse();
+		List<Course> res = new ArrayList<Course>();
+		A: for (Course course : courselist) {
+			for (Applicant a : course.getApplicants()) {
+				if (a.getId() == appid) {
+					res.add(course);
+					break A;
+				}
+			}
+		}
+		return res.get(0);
+	}
+
+	@Override
+	public Course dbGetCourseByName(String name) {
+		String hql = "From Course c where c.coursename = :name";
+		Course c = null;
+		try {
+			@SuppressWarnings("rawtypes")
+			Query q = this.sessionFactory.getCurrentSession().createQuery(hql);
+			q.setParameter("name", name);
+			c = (Course) q.getSingleResult();
+		} catch (NoResultException e) {
+			c = null;
+		}
+		return c;
+	}
+
+	/**
+	 * <h2> dbSaveOrUpdateMultipalCourses </h2>
+	 * <p>
+	 * Save multiple courses.
+	 * </p>
+	 * 
+	 * @param courses
+	 */
+	@Override
+	public void dbSaveOrUpdateMultipalCourses(List<Course> courses) {
+		for(Course c:courses) {
+			this.sessionFactory.getCurrentSession().saveOrUpdate(c);
+		}
+	}
+
+	/**
+	 * <h2> dbSaveCourse </h2>
+	 * <p>
+	 * Save course.
+	 * </p>
+	 * 
+	 * @param c Course
+	 */
+	@Override
+	public void dbSaveCourse(Course c) {
+		this.sessionFactory.getCurrentSession().saveOrUpdate(c);
+	}
+
+	@Override
+	public void dbUpdateCourse(CourseDTO c) {
+		Course course = this.dbGetCourseById(c.getId());
+		course.setCoursename(c.getCoursename());
+		course.setSchedule(c.getSchedule());
+		course.setPrices(c.getPrice());
+		course.setPostdate(LocalDate.now());
+		this.sessionFactory.getCurrentSession().update(course);
+	}
+
+	/**
+	 * <h2> dbDeleteCourse </h2>
+	 * <p>
+	 * Delete Course.
+	 * </p>
+	 * 
+	 * @param id
+	 */
+	@Override
+	public void dbDeleteCourse(Integer id) {
+		Course c = this.dbGetCourseById(id);
+		this.sessionFactory.getCurrentSession().delete(c);
 	}
 }

@@ -1,5 +1,8 @@
 package ojt.simpletask.app.web.form.registration;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +35,8 @@ public class CourseForm {
 	 * coursename
 	 * </p>
 	 */
+	@NotBlank
+	@Size(min=3,max=45)
 	private String coursename;
 	/**
 	 * <h2>schedule</h2>
@@ -39,6 +44,7 @@ public class CourseForm {
 	 * schedule
 	 * </p>
 	 */
+	@NotBlank
 	private String schedule;
 	/**
 	 * <h2>price</h2>
@@ -46,6 +52,7 @@ public class CourseForm {
 	 * price
 	 * </p>
 	 */
+	@NotBlank
 	private String price;
 	/**
 	 * <h2>date</h2>

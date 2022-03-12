@@ -53,12 +53,19 @@ public class RegistratedForm {
 	 * schedule
 	 * </p>
 	 */
-	private String schedule;
+	private String email;
 	/**
 	 * <h2>prices</h2>
 	 * <p>
 	 * prices
 	 * </p>
 	 */
-	private String prices;
+	private String phone;
+	/**
+	 * <h2> address</h2>
+	 * <p>
+	 * address
+	 * </p>
+	 */
+	private String address;
 }
