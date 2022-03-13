@@ -15,6 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import ojt.simpletask.app.bl.service.form.ExcelService;
@@ -23,6 +24,7 @@ import ojt.simpletask.app.common.excel.Excel;
 import ojt.simpletask.app.persistence.dao.CourseDAO;
 import ojt.simpletask.app.persistence.entity.course.Applicant;
 import ojt.simpletask.app.persistence.entity.course.Course;
+import ojt.simpletask.app.web.form.registration.RegistratedForm;
 
 /**
  * <h2>ExcelServiceImpl Class</h2>
@@ -68,6 +70,12 @@ public class ExcelServiceImpl implements ExcelService {
 	 */
 	String title;
 
+	/**
+	 * <h2>rowheader</h2>
+	 * <p>
+	 * rowheader
+	 * </p>
+	 */
 	Row rowheader;
 
 	/**
@@ -112,7 +120,6 @@ public class ExcelServiceImpl implements ExcelService {
 		try {
 			workbook.write(bout);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return new ByteArrayInputStream(bout.toByteArray());
@@ -129,10 +136,7 @@ public class ExcelServiceImpl implements ExcelService {
 	 */
 	@Override
 	public boolean hasExcelFormat(MultipartFile file) {
-		if (!Constant.EXCELFILETYPE.equals(file.getContentType())) {
-			return false;
-		}
-		return true;
+		return Constant.EXCELFILETYPE.equals(file.getContentType());
 	}
 
 	/**
@@ -144,67 +148,68 @@ public class ExcelServiceImpl implements ExcelService {
 	 * @param file      MultipartFile
 	 * @param sheetname String
 	 * @return
-	 * @throws IOException
+	 * @throws Exception
 	 */
 	@Override
-	public String doSaveExcelToCourse(MultipartFile file, String defaultsetting) throws IOException {
-		String result = "";
+	public List<RegistratedForm> doGetExcelData(MultipartFile file, String defaultsetting,Exception exp)
+			throws IOException, Exception {
+		if(exp instanceof MaxUploadSizeExceededException) {
+			throw new Exception("File size exceeded the limitation!<br>"+exp.getMessage());
+		}
 		workbook = new XSSFWorkbook(file.getInputStream());
+		List<RegistratedForm> formlists = new ArrayList<RegistratedForm>();
 		// I'm getting the first sheet only for this assignment.
 		sheet = workbook.getSheetAt(0);
 		Iterator<Row> rows = sheet.rowIterator();
 		rowheader = rows.next();
 		ArrayList<String> sheetHdr = Excel.getSheetHeaders(rowheader);
 		// check valid excel data
-		if (Excel.validateExcelData(sheetHdr) && Excel.isValid(sheet)) {
-			Iterator<Cell> cells = null;
-			int cellcount = 0;
-			Row cur = null;
-			Cell cell = null;
-			ArrayList<Course> dbcourses = new ArrayList<Course>();
-			Course c = null;
-			Applicant app = null;
-			while (rows.hasNext()) {
-				cur = rows.next();
-				cells = cur.cellIterator();
-				c = courseDAO.dbGetCourseByName(Excel.parseStringResult(cur.getCell(0)));
-				if (c == null) {
-					if (defaultsetting.equals(Constant.AUTO_GENERATE_COURSE)) {
-						c = new Course(null, Excel.parseStringResult(cur.getCell(0)), "Not Set", "0", null,
-								new ArrayList<Applicant>());
-						courseDAO.dbSaveCourse(c);
-					} else if (defaultsetting.equals(Constant.SKIP_UNKNOWN_COURSE))
-						continue;
-				}
-
-				System.out.println(c.getId() + "---" + c.getCoursename());
-				cells = cur.cellIterator();
-				cellcount = 0;
-				app = new Applicant();
-				while (cells.hasNext()) {
-					cell = cells.next();
-					String curhdr = sheetHdr.get(cellcount);
-					if (curhdr.equalsIgnoreCase("username")) {
-						app.setUsername(Excel.parseStringResult(cell));
-					} else if (curhdr.equalsIgnoreCase("email")) {
-						app.setEmail(Excel.parseStringResult(cell));
-					} else if (curhdr.equalsIgnoreCase("phonenumber")) {
-						app.setPhonenumber(Excel.parseStringResult(cell));
-					} else if (curhdr.equalsIgnoreCase("address")) {
-						app.setAddress(Excel.parseStringResult(cell));
+		try {
+			if (Excel.validateExcelData(sheetHdr) && Excel.isValid(sheet)) {
+				Iterator<Cell> cells = null;
+				int cellcount = 0;
+				Row cur = null;
+				Cell cell = null;
+				Course c = null;
+				RegistratedForm reg = null;
+				while (rows.hasNext()) {
+					cur = rows.next();
+					cells = cur.cellIterator();
+					c = courseDAO.dbGetCourseByName(Excel.parseStringResult(cur.getCell(0)));
+					reg = new RegistratedForm();
+					if (c == null) {
+						if (defaultsetting.equals(Constant.AUTO_GENERATE_COURSE)) {
+							c = new Course(null, Excel.parseStringResult(cur.getCell(0)), "Not Set", "0", null,
+									new ArrayList<Applicant>());
+							courseDAO.dbSaveCourse(c);
+						} else if (defaultsetting.equals(Constant.SKIP_UNKNOWN_COURSE)) {
+							continue;
+						}
 					}
-					cellcount++;
+					reg.setCourseId(c.getId());
+					cells = cur.cellIterator();
+					cellcount = 0;
+					while (cells.hasNext()) {
+						cell = cells.next();
+						String curhdr = sheetHdr.get(cellcount);
+						if (curhdr.equalsIgnoreCase("username")) {
+							reg.setUsername(Excel.parseStringResult(cell));
+						} else if (curhdr.equalsIgnoreCase("email")) {
+							reg.setEmail(Excel.parseStringResult(cell));
+						} else if (curhdr.equalsIgnoreCase("phonenumber")) {
+							reg.setPhone(Excel.parseStringResult(cell));
+						} else if (curhdr.equalsIgnoreCase("address")) {
+							reg.setAddress(Excel.parseStringResult(cell));
+						}
+						cellcount++;
+					}
+					formlists.add(reg);
 				}
-				c.getApplicants().add(app);
-				dbcourses.add(c);
+				workbook.close();
 			}
-			workbook.close();
-			courseDAO.dbSaveOrUpdateMultipalCourses(dbcourses);
-			result = "M_SUCCESS_EXCEL_UPLOAD";
-
-		} else {
-			result = "M_ER_FILL_FULL_EXCEL";
+		} catch (Exception e) {
+			throw new Exception("<h3>Cannot Upload Excel!</h3><br><p class='exc-err'>"+e.getMessage()+"</p>");
 		}
-		return result;
+		return formlists;
 	}
 }

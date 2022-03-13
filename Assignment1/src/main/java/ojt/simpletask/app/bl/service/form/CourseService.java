@@ -117,4 +117,15 @@ public interface CourseService {
 	 * @return CourseDTO
 	 */
 	public CourseDTO doGetCourseById(Integer id);
+	/**
+	 * <h2> doSaveExcelData</h2>
+	 * <p>
+	 * Save excel data
+	 * </p>
+	 *
+	 * @param formlists
+	 * @return
+	 * @return String
+	 */
+	public void doSaveExcelData(List<RegistratedForm> formlists);
 }

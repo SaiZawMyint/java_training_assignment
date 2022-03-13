@@ -39,7 +39,7 @@ public class CourseServiceImpl implements CourseService {
 	@Autowired
 	private CourseDAO courseDAO;
 	/**
-	 * <h2> applicantDAO</h2>
+	 * <h2>applicantDAO</h2>
 	 * <p>
 	 * applicantDAO
 	 * </p>
@@ -94,16 +94,16 @@ public class CourseServiceImpl implements CourseService {
 		List<Applicant> app = applicantDAO.getAllApplicants();
 		Course course = null;
 		RegistratedForm forms = null;
-		for(Applicant a: app) {
+		for (Applicant a : app) {
 			System.out.println(a.getId());
-			//prevent dbGetCourseByAppId which can return null or index out of bound.
-			//Why these return because I'm not delete parmanently the applicant form.
-			//I want to markup the data with delete_at by date in database.
+			// prevent dbGetCourseByAppId which can return null or index out of bound.
+			// Why these return because I'm not delete parmanently the applicant form.
+			// I want to markup the data with delete_at by date in database.
 			try {
-			course = courseDAO.dbGetCourseByAppId(a.getId());
-			}catch(IndexOutOfBoundsException e) {
+				course = courseDAO.dbGetCourseByAppId(a.getId());
+			} catch (IndexOutOfBoundsException e) {
 				continue;
-			}catch(NullPointerException e) {
+			} catch (NullPointerException e) {
 				continue;
 			}
 			forms = new RegistratedForm();
@@ -162,7 +162,7 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	/**
-	 * <h2> doGetAllCourseName </h2>
+	 * <h2>doGetAllCourseName</h2>
 	 * <p>
 	 * Get all course name.
 	 * </p>
@@ -173,8 +173,8 @@ public class CourseServiceImpl implements CourseService {
 	public List<String> doGetAllCourseName() {
 		List<String> allcoursename = new ArrayList<String>();
 		List<CourseDTO> courses = this.doGetAllCourse();
-		for(CourseDTO cdto : courses) {
-			allcoursename.add(cdto.getId()+" - "+cdto.getCoursename());
+		for (CourseDTO cdto : courses) {
+			allcoursename.add(cdto.getId() + " - " + cdto.getCoursename());
 		}
 		return allcoursename;
 	}
@@ -188,6 +188,15 @@ public class CourseServiceImpl implements CourseService {
 	public CourseDTO doGetCourseById(Integer id) {
 		Course c = courseDAO.dbGetCourseById(id);
 		return new CourseDTO(c.getId(), c.getCoursename(), c.getSchedule(), c.getPrices(), null, c.getApplicants());
+	}
+
+	@Override
+	public void doSaveExcelData(List<RegistratedForm> formlists) {
+		ApplicantDTO app = null;
+		for (RegistratedForm form : formlists) {
+			app = new ApplicantDTO(null, form.getUsername(), form.getEmail(), form.getPhone(), form.getAddress());
+			this.doSaveCourseForm(form.getCourseId(), app);
+		}
 	}
 
 }

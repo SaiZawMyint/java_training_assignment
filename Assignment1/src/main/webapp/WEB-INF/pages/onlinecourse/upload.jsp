@@ -32,6 +32,7 @@
               <small>If course name match by excel dosen't match in database, you can analyse it by set default setting.</small>
         </fieldset>
         <fieldset>
+        <legend>Choose An Excel File</legend>
           <form:input type="file" path="excfile" class="inp"
             placeholder="Excel File" />
           <i class="err-txt"><form:errors path="excfile"

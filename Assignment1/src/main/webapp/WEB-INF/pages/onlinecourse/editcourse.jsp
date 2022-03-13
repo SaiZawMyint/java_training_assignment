@@ -20,11 +20,10 @@
       <form:form method="Post"
         action="${pageContext.request.contextPath}/edit/course/form"
         modelAttribute="courseForm">
-        <form:input path="id" value="${courseForm.id }"
-          hidden="hidden" />
+        <form:input path="id" value="${courseForm.id }" hidden="hidden" />
         <fieldset>
           <form:input type="text" path="coursename" class="inp"
-            placeholder="Course Name" value="${courseFrom.coursename }"/>
+            placeholder="Course Name" value="${courseFrom.coursename }" />
           <i class="err-txt"><form:errors path="coursename"
               cssClass="error" /></i>
         </fieldset>
@@ -41,12 +40,10 @@
               cssClass="error" /></i>
         </fieldset>
         <fieldset>
-          <a
-            href="${pageContext.request.contextPath}/home"
-            class="btn ed">Back</a> <button name="button"
-            type="submit" class="btn submit">Submit</button>
+          <a href="${pageContext.request.contextPath}/home"
+            class="btn ed">Back</a>
+          <button name="button" type="submit" class="btn submit">Submit</button>
         </fieldset>
-
       </form:form>
     </div>
   </div>

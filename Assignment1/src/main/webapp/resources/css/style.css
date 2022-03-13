@@ -161,7 +161,8 @@ table {
   background-color: #ff008040;
 }
 .message-field {
-  width: 350px;
+  width: fit-content;
+  max-width: 90%;
   margin: 10px auto;
   color: #ff0080;
   border: 2px solid;
@@ -170,7 +171,14 @@ table {
   box-sizing: border-box;
   border-radius: 5px;
 }
-
+.exc-err{
+  text-align: left;
+  font-size: .9em;
+}
+.exc-err u{
+  color: #343434;
+  text-decoration: underline;
+}
 .express-list {
   list-style: none;
   margin: 0px auto 30px;

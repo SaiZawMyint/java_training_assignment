@@ -11,8 +11,10 @@
 		<intercept-url pattern="/home" access="hasAnyRole('USER', 'ADMIN')" />
 		<intercept-url pattern="/registration" access="hasAnyRole('USER', 'ADMIN')" />
 		<intercept-url pattern="/upload" access="hasRole('ADMIN')" />
-        <intercept-url pattern="/form/delete/{id}/{cid}" access="hasRole('ADMIN')" />
-        <intercept-url pattern="/form/edit/{id}/{cid}" access="hasRole('ADMIN')" />
+        <intercept-url pattern="/form/delete/{id}/{cid}" access="hasAnyRole('USER', 'ADMIN')" />
+        <intercept-url pattern="/form/edit/{id}/{cid}" access="hasAnyRole('USER', 'ADMIN')" />
+        <intercept-url pattern="/edit/course/{id}" access="hasRole('ADMIN')"/>
+        <intercept-url pattern="/delete/course/{id}" access="hasRole('ADMIN')"/>
 		<form-login login-page="/joinus"
 			login-processing-url="/joinus" username-parameter="username"
 			password-parameter="password" default-target-url="/home" always-use-default-target="true"/>

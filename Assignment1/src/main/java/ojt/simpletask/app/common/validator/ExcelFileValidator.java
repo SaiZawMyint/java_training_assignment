@@ -30,10 +30,27 @@ public class ExcelFileValidator implements ConstraintValidator<ExcelFile, Multip
 	 */
 	@Override
 	public boolean isValid(MultipartFile value, ConstraintValidatorContext context) {
+		boolean valid = false;
 		if (value != null) {
-			return !value.isEmpty() && value.getContentType().equals(Constant.EXCELFILETYPE);
+			if (value.isEmpty()) {
+				valid = false;
+				context.disableDefaultConstraintViolation();
+				context.buildConstraintViolationWithTemplate("File is empty!").addConstraintViolation();
+			} else if (!value.getContentType().equals(Constant.EXCELFILETYPE)) {
+				valid = false;
+			} else if (value.getSize() >= 20971520) {
+				valid = false;
+				context.disableDefaultConstraintViolation();
+				context.buildConstraintViolationWithTemplate("File exceeded the maximun size! \n Current File Size : "
+						+ value.getSize() + "\n Max File Size : 20971520.").addConstraintViolation();
+			} else {
+				valid = true;
+			}
+		} else {
+			context.disableDefaultConstraintViolation();
+			context.buildConstraintViolationWithTemplate("Please select a file to upload!").addConstraintViolation();
 		}
-		return false;
+		return valid;
 	}
 
 }

@@ -2,11 +2,14 @@ package ojt.simpletask.app.bl.service.form;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import ojt.simpletask.app.web.form.registration.RegistratedForm;
+
 /**
- * <h2> ExcelService Class</h2>
+ * <h2>ExcelService Class</h2>
  * <p>
  * Process for Displaying ExcelService
  * </p>
@@ -16,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface ExcelService {
 	/**
-	 * <h2> doDownlaodCourse</h2>
+	 * <h2>doDownlaodCourse</h2>
 	 * <p>
 	 * 
 	 * </p>
@@ -25,9 +28,9 @@ public interface ExcelService {
 	 * @return ByteArrayInputStream
 	 */
 	public ByteArrayInputStream doDownlaodCourse();
-	
+
 	/**
-	 * <h2> hasExcelFormat</h2>
+	 * <h2>hasExcelFormat</h2>
 	 * <p>
 	 * Check excel format.
 	 * </p>
@@ -37,8 +40,9 @@ public interface ExcelService {
 	 * @return boolean
 	 */
 	public boolean hasExcelFormat(MultipartFile file);
+
 	/**
-	 * <h2> saveExcelToCourse</h2>
+	 * <h2>saveExcelToCourse</h2>
 	 * <p>
 	 * Save excel to course.
 	 * </p>
@@ -46,5 +50,5 @@ public interface ExcelService {
 	 * @param file MultipartFile
 	 * @return void
 	 */
-	public String doSaveExcelToCourse(MultipartFile file,String defaultsetting) throws IOException ;
+	public List<RegistratedForm> doGetExcelData(MultipartFile file, String defaultsetting,Exception exp) throws IOException,Exception;
 }

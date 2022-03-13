@@ -1,6 +1,5 @@
 package ojt.simpletask.app.web.controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -31,6 +30,7 @@ import ojt.simpletask.app.common.excel.Constant;
 import ojt.simpletask.app.web.form.excelproduct.ExcelProduct;
 import ojt.simpletask.app.web.form.registration.CourseForm;
 import ojt.simpletask.app.web.form.registration.LoginForm;
+import ojt.simpletask.app.web.form.registration.RegistratedForm;
 import ojt.simpletask.app.web.form.registration.RegistrationForm;
 
 /**
@@ -87,6 +87,15 @@ public class AppController {
 	@Autowired
 	ExcelService excelService;
 
+	/**
+	 * <h2> joinPage</h2>
+	 * <p>
+	 * Join page.
+	 * </p>
+	 *
+	 * @return
+	 * @return ModelAndView
+	 */
 	@RequestMapping(value = "/joinus")
 	public ModelAndView joinPage() {
 		model = new ModelAndView("joinus");
@@ -234,6 +243,17 @@ public class AppController {
 		}
 		return model;
 	}
+	/**
+	 * <h2> courseForm</h2>
+	 * <p>
+	 * Course Form
+	 * </p>
+	 *
+	 * @param form CourseForm
+	 * @param binder BindingResult
+	 * @return
+	 * @return ModelAndView
+	 */
 	@RequestMapping(value="/edit/course/form",method=RequestMethod.POST)
 	public ModelAndView courseForm(@Valid @ModelAttribute("courseForm") CourseForm form,BindingResult binder) {
 		model = new ModelAndView();
@@ -245,7 +265,7 @@ public class AppController {
 		}else {
 			model.setViewName("editcourse");
 			model.addObject("systemMessage", messageSource.getMessage("M_ER_CONFIRM_DENINED", null, null));
-			this.defaultFormModelView("Edit Course", new CustomForm("courseForm", form));	
+			this.defaultFormModelView(form.getCoursename(), new CustomForm("courseForm", form));	
 		}
 		return model;
 	}
@@ -285,6 +305,16 @@ public class AppController {
 		this.defaultFormModelView("Edit Form", new CustomForm("infromationForm", reg));
 		return model;
 	}
+	/**
+	 * <h2> deleteCourse</h2>
+	 * <p>
+	 * Delete course
+	 * </p>
+	 *
+	 * @param id Integer
+	 * @return
+	 * @return ModelAndView
+	 */
 	@RequestMapping("/delete/course/{id}")
 	public ModelAndView deleteCourse(@PathVariable("id")Integer id) {
 		model = new ModelAndView("resultpage");
@@ -331,16 +361,17 @@ public class AppController {
 	 * @return ModelAndView
 	 */
 	@RequestMapping(value = "/excel/upload", method = RequestMethod.POST)
-	public ModelAndView uploadExcel(@Valid @ModelAttribute("excelForm") ExcelProduct exc, BindingResult binder) {
+	public ModelAndView uploadExcel(@Valid @ModelAttribute("excelForm") ExcelProduct exc, BindingResult binder,Exception exp) {
 		model = new ModelAndView();
 		if (!binder.hasErrors()) {
 			model.setViewName("resultpage");
-			try {
-				String excelsavemessage = excelService.doSaveExcelToCourse(exc.getExcfile(), exc.getCoursename());
-				model.addObject("systemMessage", messageSource.getMessage(excelsavemessage, null, null));
-			} catch (IOException e) {
-				model.addObject("systemMessage", messageSource.getMessage("M_ER_EXCEL_DENINED", null, null));
-			}
+				try {
+					List<RegistratedForm> exeldata = excelService.doGetExcelData(exc.getExcfile(), exc.getCoursename(),exp);
+					courseService.doSaveExcelData(exeldata);
+					model.addObject("systemMessage", messageSource.getMessage("M_SUCCESS_EXCEL_UPLOAD", null, null));
+				} catch (Exception e) {
+					model.addObject("systemMessage", e.getMessage());
+				}
 		} else {
 			model.setViewName("upload");
 			this.defaultFormModelView("Upload Course From Excel", new CustomForm("allCourses", Constant.defaultSetting()));
